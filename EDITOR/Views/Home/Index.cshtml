@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Demo Sample building Web Upload Image/File with ASP.NET Core</p>
+</div>
+
+<h2>Upload Image to CKEditor without CkFinder</h2>
+<textarea name="blog_input"></textarea>
+
+@section scripts{
+<script src="~/lib/ckeditor/ckeditor.js"></script>
+<script>
+    CKEDITOR.replace('blog_input', {
+        language: 'vi',
+        filebrowserUploadMethod: 'form',
+        filebrowserImageUploadUrl: '/Home/UploadImage',
+        //removeDialogTabs : 'image:advanced;image:Link;link:advanced;link:upload'
+    });
+
+    //Fix: cannot click on element ck in modal
+    $.fn.modal.Constructor.prototype.enforceFocus = function () {
+        $(document)
+            .off('focusin.bs.modal') // guard against infinite focus loop
+            .on('focusin.bs.modal', $.proxy(function (e) {
+                if (
+                    this.$element[0] !== e.target && !this.$element.has(e.target).length
+                    // CKEditor compatibility fix start.
+                    && !$(e.target).closest('.cke_dialog, .cke').length
+                    // CKEditor compatibility fix end.
+                ) {
+                    this.$element.trigger('focus');
+                }
+            }, this));
+    };
+
+</script>
+}
